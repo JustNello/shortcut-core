@@ -4,6 +4,8 @@ import com.nellocorp.shortcut.error.EmptyPayloadException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 class TagTest {
 
     @Test
@@ -14,9 +16,27 @@ class TagTest {
 
         rootTag.put(middleTagHibernate);
         rootTag.put(middleTagOca);
+        List<Tag> result = rootTag.search(middleTagHibernate);
 
-        Tag result = rootTag.search(middleTagHibernate);
-        Assertions.assertEquals("Hibernate", result.alias());
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals("Hibernate",
+                result.stream().iterator().next().alias());
+    }
+
+    @Test
+    void searchNestedTagByPartialLabel() {
+        Tag rootTag = new Tag("Java");
+        Tag middleTagHibernate = new Tag("Hibernate");
+        Tag middleTagOca = new Tag("Oracle Certification Test");
+
+        rootTag.put(middleTagHibernate);
+        rootTag.put(middleTagOca);
+        List<Tag> result = rootTag.search("Hib");
+
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals("Hibernate",
+                result.stream().iterator().next().alias());
+        ;
     }
 
     @Test
@@ -27,8 +47,8 @@ class TagTest {
 
         rootTag.put(middleTagOca);
 
-        Tag result = rootTag.search(middleTagHibernate);
-        Assertions.assertNull(result);
+        List<Tag> result = rootTag.search(middleTagHibernate);
+        Assertions.assertEquals(0, result.size());
     }
 
     @Test

@@ -2,7 +2,10 @@ package com.nellocorp.shortcut.model;
 
 import com.nellocorp.shortcut.error.EmptyPayloadException;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import static java.lang.String.format;
 
@@ -41,17 +44,31 @@ public class Tag implements Navigable<Tag, String>, Payload<String> {
     }
 
     @Override
-    public Tag search(Tag node) {
+    public List<Tag> search(Tag node) {
         return search(node.alias());
     }
 
     @Override
-    public Tag search(Label<String> label) {
+    public List<Tag> search(Label<String> label) {
         return search(label.alias());
     }
 
-    private Tag search(String label) {
-        return this.nestedTags.get(label);
+    public List<Tag> search(String label) {
+        return doSearch(label);
+    }
+
+    private List<Tag> doSearch(String label) {
+        // Try direct search - cost O(1)
+        Tag tag = this.nestedTags.get(label);
+        if (tag != null)
+            return Collections.singletonList(tag);
+
+        // Iterate every key - cost O(n)
+        List<Tag> result = new ArrayList<>();
+        for (String l : this.nestedTags.keySet())
+            if (l.startsWith(label))
+                result.add(this.nestedTags.get(l));
+        return result;
     }
 
     @Override
