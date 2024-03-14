@@ -2,10 +2,7 @@ package com.nellocorp.shortcut.model;
 
 import com.nellocorp.shortcut.error.EmptyPayloadException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static java.lang.String.format;
 
@@ -53,6 +50,15 @@ public class Tag implements Navigable<Tag, String>, Payload<String> {
         return search(label.alias());
     }
 
+    @Override
+    public Tag get(int index) {
+        int i = 0;
+        for (Tag tag : this)
+            if (i == index)
+                return tag;
+        throw new IndexOutOfBoundsException();
+    }
+
     public List<Tag> search(String label) {
         return doSearch(label);
     }
@@ -77,5 +83,10 @@ public class Tag implements Navigable<Tag, String>, Payload<String> {
             throw new EmptyPayloadException(
                     format("[%s] tag has an empty payload", alias()));
         return this.payload;
+    }
+
+    @Override
+    public Iterator<Tag> iterator() {
+        return this.nestedTags.values().iterator();
     }
 }

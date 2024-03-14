@@ -4,6 +4,9 @@ import com.nellocorp.shortcut.error.EmptyPayloadException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 class TagTest {
@@ -67,5 +70,24 @@ class TagTest {
         Tag tag = new Tag("JDCBTemplate", payload);
 
         Assertions.assertEquals(payload, tag.getPayload());
+    }
+
+    @Test
+    void iterateTags() {
+        Tag rootTag = new Tag("Java");
+        Tag middleTagHibernate = new Tag("Hibernate");
+        Tag middleTagOca = new Tag("Oracle Certification Test");
+
+        rootTag.put(middleTagHibernate);
+        rootTag.put(middleTagOca);
+
+        List<Tag> result = new ArrayList<>();
+        // Tag implements the Iterable interface
+        for (Tag tag : rootTag)
+            result.add(tag);
+
+        Assertions.assertEquals(
+                Arrays.asList(middleTagOca, middleTagHibernate),
+                result);
     }
 }
